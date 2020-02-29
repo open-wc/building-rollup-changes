@@ -156,4 +156,3 @@ const G="adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.pro
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */(t||(t=e`I'm an app`))}});
-//# sourceMappingURL=index-dd129e3d.js.map

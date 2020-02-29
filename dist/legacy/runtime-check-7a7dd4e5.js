@@ -1,0 +1,1 @@
+System.register([],(function(){"use strict";return{execute:function(){const e=new class{someMethod(){return!0}};console.log(e.someMethod());const o=function*(e){yield e,yield e+10}(10);console.log(o.next().value)}}}));
