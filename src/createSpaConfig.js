@@ -1,16 +1,12 @@
 const merge = require('deepmerge');
-const path = require('path');
 const html = require('@open-wc/rollup-plugin-html');
 const polyfillsLoader = require('@open-wc/rollup-plugin-polyfills-loader');
 const { createBasicConfig } = require('./createBasicConfig');
 
 function createSpaConfig(options) {
   const basicConfig = createBasicConfig(options);
-  const htmlPlugin = html({
-    inputPath: options.indexHtmlPath,
-    inject: false,
-  });
-  const htmlFileName = path.basename(options.indexHtmlPath);
+
+  const htmlPlugin = html({ inject: false });
   basicConfig.output[0].plugins.push(htmlPlugin.addOutput('legacy'));
   basicConfig.output[1].plugins.push(htmlPlugin.addOutput('modern'));
 
@@ -18,7 +14,6 @@ function createSpaConfig(options) {
     plugins: [
       htmlPlugin,
       polyfillsLoader({
-        htmlFileName,
         modernOutput: 'modern',
         legacyOutput: { name: 'legacy', test: "!('noModule' in HTMLScriptElement.prototype)" },
         polyfills: {

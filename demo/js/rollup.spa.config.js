@@ -1,7 +1,8 @@
+const merge = require('deepmerge');
 const { createSpaConfig } = require('../../index.js');
 
-const baseConfig = createSpaConfig({
-  indexHtmlPath: 'demo/js/index.html',
-});
+const baseConfig = createSpaConfig();
 
-module.exports = baseConfig;
+module.exports = merge(baseConfig, {
+  input: 'demo/js/index.html',
+});
