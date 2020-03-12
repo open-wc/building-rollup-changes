@@ -8,7 +8,6 @@ const babel = require('rollup-plugin-babel');
 const merge = require('deepmerge');
 const { createBabelConfig } = require('./createBabelConfig');
 
-const development = !!process.env.ROLLUP_WATCH;
 const filterFalsy = _ => !!_;
 
 function pluginWithOptions(plugin, userConfig, defaultConfig) {
@@ -29,17 +28,20 @@ function createBasicConfig(options = {}) {
       nodeResolve: true,
       babel: true,
       terser: true,
+      developmentMode: !!process.env.ROLLUP_WATCH,
     },
     options,
   );
+  const { developmentMode } = options;
+  const fileName = `[${developmentMode ? 'name' : 'hash'}].js`;
 
   return {
-    treeshake: !development,
+    treeshake: !developmentMode,
 
     output: [
       {
-        entryFileNames: 'legacy-[name]-[hash].js',
-        chunkFileNames: 'legacy-[name]-[hash].js',
+        entryFileNames: `legacy-${fileName}`,
+        chunkFileNames: `legacy-${fileName}`,
         // systemjs is handled by babel
         format: 'es',
         dir: 'dist',
@@ -56,8 +58,8 @@ function createBasicConfig(options = {}) {
         ],
       },
       {
-        entryFileNames: '[name]-[hash].js',
-        chunkFileNames: '[name]-[hash].js',
+        entryFileNames: fileName,
+        chunkFileNames: fileName,
         format: 'es',
         dir: 'dist',
         plugins: [babel.generated(createBabelConfig(findSupportedBrowsers()))],
@@ -75,7 +77,7 @@ function createBasicConfig(options = {}) {
           // rollup doesn't support optional chaining yet, so we compile it here
           [require.resolve('@babel/plugin-proposal-optional-chaining'), { loose: true }],
           require.resolve('babel-plugin-bundled-import-meta'),
-          !development && [
+          !developmentMode && [
             require.resolve('babel-plugin-template-html-minifier'),
             {
               modules: {
@@ -94,7 +96,8 @@ function createBasicConfig(options = {}) {
         ].filter(filterFalsy),
       }),
 
-      // !development && pluginWithOptions(terser, options.terser, { output: { comments: false } }),
+      !developmentMode &&
+        pluginWithOptions(terser, options.terser, { output: { comments: false } }),
     ].filter(filterFalsy),
   };
 }
