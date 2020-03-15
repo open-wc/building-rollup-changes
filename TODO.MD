@@ -2,7 +2,7 @@ spa
 
 - workbox
 - inject service worker?
-- index.html in `demo/js/index.html` and import to `./foo.js` creates resolve error
+- index.html in `demo/js/index.html` and import to `./foo.js` in linemodule creates resolve error
 
 babel
 
@@ -25,3 +25,5 @@ other:
 
 - review naming of config options (ex. additionalLegacyBuild)
 - separate export of babel config
+- thorough porta test
+- port over demo from building-rollup
