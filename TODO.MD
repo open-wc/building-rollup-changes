@@ -12,6 +12,7 @@ babel
 polyfills loader:
 
 - polyfills loader injected into JS
+- polyfill dependencies (fetch - abort controller)
 
 demos:
 
