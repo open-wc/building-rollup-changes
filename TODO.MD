@@ -8,7 +8,6 @@ babel
 
 - how to handle helpers with .generated?
 - hash before babel
-- investigate loose mode
 
 polyfills loader:
 
@@ -21,6 +20,5 @@ demos:
 other:
 
 - review naming of config options (ex. additionalLegacyBuild)
-- separate export of babel config
 - thorough porta test
 - port over demo from building-rollup

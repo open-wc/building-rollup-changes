@@ -1,6 +1,6 @@
 const merge = require('deepmerge');
 
-const filterFalsy = _ => !!_;
+const isFalsy = _ => !!_;
 
 function pluginWithOptions(plugin, userConfig, defaultConfig) {
   if (!userConfig) {
@@ -11,4 +11,4 @@ function pluginWithOptions(plugin, userConfig, defaultConfig) {
   return plugin(config);
 }
 
-module.exports = { filterFalsy, pluginWithOptions };
+module.exports = { isFalsy, pluginWithOptions };

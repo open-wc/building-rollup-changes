@@ -17,7 +17,7 @@ const openWcTargets = [
  * otherwise uses a default set of supported browsers
  * @returns {string[]}
  */
-function findSupportedBrowsers() {
+function findModernBrowserslist() {
   // generate default list
   const browserslistDefaultTargets = browserslist(browserslist.defaults);
   // empty call causes browserslist to find a user-defined configuration
@@ -42,4 +42,4 @@ function findSupportedBrowsers() {
   return userHasDefinedTargets ? userTargets : browserslist(openWcTargets);
 }
 
-module.exports = { findSupportedBrowsers };
+module.exports = { findModernBrowserslist };
