@@ -24,4 +24,3 @@ other:
 - separate export of babel config
 - thorough porta test
 - port over demo from building-rollup
-- test abortcontroller on IE11
