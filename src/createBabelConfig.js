@@ -1,7 +1,6 @@
 const { findSupportedBrowsers } = require('./findSupportedBrowsers');
 
 function createBabelConfig(targets = findSupportedBrowsers()) {
-  console.log('targets', targets);
   return {
     presets: [
       // can be removed when https://github.com/babel/babel/pull/11083 is merged

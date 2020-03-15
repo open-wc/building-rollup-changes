@@ -1,7 +1,6 @@
-/** @typedef {import('./types').BasicOptions}  BasicOptions */
+/** @typedef {import('./types').BasicOptions} BasicOptions */
 
 /* eslint-disable no-param-reassign */
-const findSupportedBrowsers = require('@open-wc/building-utils/find-supported-browsers');
 const resolve = require('@rollup/plugin-node-resolve');
 const { terser } = require('rollup-plugin-terser');
 const babel = require('rollup-plugin-babel');
@@ -35,45 +34,23 @@ function createBasicConfig(options = {}) {
   const { developmentMode } = options;
   const fileName = `[${developmentMode ? 'name' : 'hash'}].js`;
 
-  return {
+  const config = {
     treeshake: !developmentMode,
 
-    output: [
-      {
-        entryFileNames: `legacy-${fileName}`,
-        chunkFileNames: `legacy-${fileName}`,
-        // systemjs is handled by babel
-        format: 'es',
-        dir: 'dist',
-        plugins: [
-          babel.generated(
-            merge(createBabelConfig(['ie 11']), {
-              babelrc: false,
-              configFile: false,
-              plugins: [
-                require.resolve('@babel/plugin-transform-modules-systemjs'),
-                // necessary for systemjs to transform dynamic imports
-                require.resolve('@babel/plugin-proposal-dynamic-import'),
-              ],
-            }),
-          ),
-        ],
-      },
-      {
-        entryFileNames: fileName,
-        chunkFileNames: fileName,
-        format: 'es',
-        dir: 'dist',
-        plugins: [
-          babel.generated(
-            merge(createBabelConfig(), {
-              babelrc: false,
-              configFile: false,
-            }),
-          ),
-        ],
-      },
-    ],
+    output: {
+      entryFileNames: fileName,
+      chunkFileNames: fileName,
+      format: 'es',
+      dir: 'dist',
+      plugins: [
+        babel.generated(
+          merge(createBabelConfig(), {
+            babelrc: false,
+            configFile: false,
+          }),
+        ),
+      ],
+    },
 
     plugins: [
       pluginWithOptions(resolve, options.nodeResolve, {
@@ -109,6 +86,33 @@ function createBasicConfig(options = {}) {
         pluginWithOptions(terser, options.terser, { output: { comments: false } }),
     ].filter(filterFalsy),
   };
+
+  // when we need to add an additional legacy build, we turn the output option into an array
+  // of output configs
+  if (options.additionalLegacyBuild) {
+    config.output = [
+      config.output,
+      {
+        ...config.output,
+        entryFileNames: `legacy-${fileName}`,
+        chunkFileNames: `legacy-${fileName}`,
+        plugins: [
+          babel.generated(
+            merge(createBabelConfig(['ie 11']), {
+              babelrc: false,
+              configFile: false,
+              plugins: [
+                require.resolve('@babel/plugin-transform-modules-systemjs'),
+                // necessary for systemjs to transform dynamic imports
+                require.resolve('@babel/plugin-proposal-dynamic-import'),
+              ],
+            }),
+          ),
+        ],
+      },
+    ];
+  }
+  return config;
 }
 
 module.exports = { createBasicConfig };

@@ -16,5 +16,7 @@ polyfills:
 
 other:
 
-- decide on name for second rollup build output for legacy browsers
+- review naming of config options (ex. additionalLegacyBuild)
 - dynamic imports
+- example compiling all to systemjs
+- separate export of babel config

@@ -2,6 +2,7 @@ export interface BasicOptions {
   nodeResolve?: boolean | object;
   babel?: boolean | object;
   terser?: boolean | object;
+  additionalLegacyBuild?: boolean;
 }
 
 export interface SpaOptions extends BasicOptions {

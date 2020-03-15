@@ -6,10 +6,13 @@
   "scripts": {
     "build:basic": "rimraf dist && rollup -c demo/js/rollup.basic.config.js",
     "build:spa": "rimraf dist && rollup -c demo/js/rollup.spa.config.js",
+    "build:spa-legacy": "rimraf dist && rollup -c demo/js/rollup.spa-legacy.config.js",
     "build:babelrc": "rimraf dist && rollup -c demo/babelrc/rollup.config.js",
     "start:demo": "es-dev-server --app-index demo/js/index.html --open",
-    "start:spa": "npm run build:spa && npm run start:demo",
-    "start:babelrc": "npm run build:babelrc && npm run start:demo"
+    "start:build": "es-dev-server --root-dir dist --open",
+    "start:spa": "npm run build:spa && npm run start:build",
+    "start:spa-legacy": "npm run build:spa-legacy && npm run start:build",
+    "start:babelrc": "npm run build:babelrc && npm run start:build"
   },
   "keywords": [],
   "author": "",
