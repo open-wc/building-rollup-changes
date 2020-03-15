@@ -14,12 +14,9 @@ polyfills loader:
 - polyfills loader injected into JS
 - polyfill dependencies (fetch - abort controller)
 
-demos:
-
-- example compiling all to systemjs
-
 other:
 
 - review naming of config options (ex. additionalLegacyBuild)
 - thorough porta test
 - port over demo from building-rollup
+- how to create systemjs output
