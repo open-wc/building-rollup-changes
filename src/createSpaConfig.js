@@ -5,7 +5,8 @@ const merge = require('deepmerge');
 const html = require('@open-wc/rollup-plugin-html');
 const polyfillsLoader = require('@open-wc/rollup-plugin-polyfills-loader');
 const { createBasicConfig } = require('./createBasicConfig');
-const { filterFalsy, pluginWithOptions } = require('./utils');
+const { pluginWithOptions } = require('./utils');
+const { defaultPolyfills, defaultLegacyPolyfills } = require('./polyfills');
 
 /**
  * @param {PolyfillsLoaderConfig | boolean} userConfig
@@ -59,12 +60,7 @@ function createSpaConfig(options) {
             name: 'legacy',
             test: "!('noModule' in HTMLScriptElement.prototype)",
           },
-          polyfills: {
-            coreJs: true,
-            fetch: true,
-            webcomponents: true,
-            dynamicImport: true,
-          },
+          polyfills: defaultLegacyPolyfills,
         }),
       ],
     });
@@ -73,11 +69,7 @@ function createSpaConfig(options) {
       plugins: [
         htmlPlugin,
         polyfillsLoader({
-          polyfills: {
-            fetch: true,
-            webcomponents: true,
-            dynamicImport: true,
-          },
+          polyfills: defaultPolyfills,
         }),
       ],
     });

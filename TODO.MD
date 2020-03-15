@@ -2,7 +2,7 @@ spa
 
 - workbox
 - inject service worker?
-- index.html in `demo/js/index.html` and import to `./foo.js` in linemodule creates resolve error
+- index.html in `demo/js/index.html` and import to `./foo.js` in linemodule creates resolve error (need to fix in html plugin)
 
 babel
 
@@ -12,9 +12,6 @@ babel
 
 polyfills loader:
 
-- decide which polyfills to load
-- minify
-- fix dynamic import
 - polyfills loader injected into JS
 
 demos:
@@ -27,3 +24,4 @@ other:
 - separate export of babel config
 - thorough porta test
 - port over demo from building-rollup
+- test abortcontroller on IE11
