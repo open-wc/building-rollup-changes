@@ -2,7 +2,6 @@ spa
 
 - workbox
 - inject service worker?
-- how to pass index.html as input (allow input with a .html file?) (DOING)
 - index.html in `demo/js/index.html` and import to `./foo.js` creates resolve error
 
 babel
@@ -18,5 +17,4 @@ polyfills:
 
 other:
 
-- dist folder race condition (order not deterministic) (DOING)
 - decide on name for second rollup build output for legacy browsers

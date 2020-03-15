@@ -7,6 +7,7 @@ const { terser } = require('rollup-plugin-terser');
 const babel = require('rollup-plugin-babel');
 const merge = require('deepmerge');
 const { createBabelConfig } = require('./createBabelConfig');
+const { modernBrowsers } = require('./modernBrowsers');
 
 const filterFalsy = _ => !!_;
 
@@ -48,6 +49,8 @@ function createBasicConfig(options = {}) {
         plugins: [
           babel.generated(
             merge(createBabelConfig(['ie 11']), {
+              babelrc: false,
+              configFile: false,
               plugins: [
                 require.resolve('@babel/plugin-transform-modules-systemjs'),
                 // necessary for systemjs to transform dynamic imports
@@ -62,7 +65,12 @@ function createBasicConfig(options = {}) {
         chunkFileNames: fileName,
         format: 'es',
         dir: 'dist',
-        plugins: [babel.generated(createBabelConfig(findSupportedBrowsers()))],
+        plugins: [
+          merge(babel.generated(createBabelConfig(modernBrowsers)), {
+            babelrc: false,
+            configFile: false,
+          }),
+        ],
       },
     ],
 

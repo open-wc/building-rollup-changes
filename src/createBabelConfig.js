@@ -14,6 +14,7 @@ function createBabelConfig(targets) {
             '@babel/plugin-transform-template-literals',
           ],
           useBuiltIns: false,
+          shippedProposals: true,
           modules: false,
         },
       ],

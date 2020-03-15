@@ -6,5 +6,5 @@ const baseConfig = createSpaConfig({
 });
 
 module.exports = merge(baseConfig, {
-  input: 'demo/js/index.html',
+  input: 'demo/babelrc/index.html',
 });

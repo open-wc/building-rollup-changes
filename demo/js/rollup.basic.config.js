@@ -2,7 +2,7 @@ const deepmerge = require('deepmerge');
 const { createBasicConfig } = require('../../index.js');
 
 const baseConfig = createBasicConfig({
-  developmentMode: true,
+  developmentMode: false,
 });
 
 module.exports = deepmerge(baseConfig, {
