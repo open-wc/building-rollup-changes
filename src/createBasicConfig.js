@@ -6,17 +6,7 @@ const { terser } = require('rollup-plugin-terser');
 const babel = require('rollup-plugin-babel');
 const merge = require('deepmerge');
 const { createBabelConfig } = require('./createBabelConfig');
-
-const filterFalsy = _ => !!_;
-
-function pluginWithOptions(plugin, userConfig, defaultConfig) {
-  if (!userConfig) {
-    return undefined;
-  }
-
-  const config = merge(defaultConfig, typeof userConfig === 'object' ? userConfig : {});
-  return plugin(config);
-}
+const { filterFalsy, pluginWithOptions } = require('./utils');
 
 /**
  * @param {BasicOptions} options

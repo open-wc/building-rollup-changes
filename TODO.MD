@@ -10,13 +10,18 @@ babel
 - hash before babel
 - investigate loose mode
 
-polyfills:
+polyfills loader:
 
 - decide which polyfills to load
+- minify
+- fix dynamic import
+- polyfills loader injected into JS
+
+demos:
+
+- example compiling all to systemjs
 
 other:
 
 - review naming of config options (ex. additionalLegacyBuild)
-- dynamic imports
-- example compiling all to systemjs
 - separate export of babel config
