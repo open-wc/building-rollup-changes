@@ -6,7 +6,6 @@ spa
 
 babel
 
-- how to handle babelrc
 - how to handle helpers with .generated?
 - hash before babel
 - investigate loose mode
@@ -18,3 +17,4 @@ polyfills:
 other:
 
 - decide on name for second rollup build output for legacy browsers
+- dynamic imports

@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:demo": "es-dev-server --app-index demo/js/index.html --open",
     "build:basic": "rimraf dist && rollup -c demo/js/rollup.basic.config.js",
     "build:spa": "rimraf dist && rollup -c demo/js/rollup.spa.config.js",
-    "build:babelrc": "rimraf dist && rollup -c demo/babelrc/rollup.spa.config.js",
-    "start:spa": "npm run build:spa && es-dev-server --root-dir dist --open",
-    "start:babelrc": "npm run build:babelrc && es-dev-server --root-dir dist --open"
+    "build:babelrc": "rimraf dist && rollup -c demo/babelrc/rollup.config.js",
+    "start:demo": "es-dev-server --app-index demo/js/index.html --open",
+    "start:spa": "npm run build:spa && npm run start:demo",
+    "start:babelrc": "npm run build:babelrc && npm run start:demo"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +32,7 @@
     "acorn-optional-chaining": "0.0.3",
     "babel-plugin-bundled-import-meta": "^0.3.2",
     "babel-plugin-template-html-minifier": "^4.0.0",
+    "browserslist": "^4.9.1",
     "deepmerge": "^4.2.2",
     "rollup-plugin-babel": "^5.0.0-alpha.1",
     "rollup-plugin-terser": "^5.2.0",

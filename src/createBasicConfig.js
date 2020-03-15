@@ -7,7 +7,6 @@ const { terser } = require('rollup-plugin-terser');
 const babel = require('rollup-plugin-babel');
 const merge = require('deepmerge');
 const { createBabelConfig } = require('./createBabelConfig');
-const { modernBrowsers } = require('./modernBrowsers');
 
 const filterFalsy = _ => !!_;
 
@@ -66,10 +65,12 @@ function createBasicConfig(options = {}) {
         format: 'es',
         dir: 'dist',
         plugins: [
-          merge(babel.generated(createBabelConfig(modernBrowsers)), {
-            babelrc: false,
-            configFile: false,
-          }),
+          babel.generated(
+            merge(createBabelConfig(), {
+              babelrc: false,
+              configFile: false,
+            }),
+          ),
         ],
       },
     ],
