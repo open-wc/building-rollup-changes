@@ -1,22 +1,15 @@
-spa
+# Before MVP
 
-- workbox
-- inject service worker?
-- index.html in `demo/js/index.html` and import to `./foo.js` in linemodule creates resolve error (need to fix in html plugin)
-
-babel
-
-- how to handle helpers with .generated?
-- hash before babel
-
-polyfills loader:
-
-- polyfills loader injected into JS
-- polyfill dependencies (fetch - abort controller)
-
-other:
-
-- review naming of config options (ex. additionalLegacyBuild)
-- thorough porta test
 - port over demo from building-rollup
-- how to create systemjs output
+- thorough porta test
+- test on windows
+- review naming of config options (ex. additionalLegacyBuild)
+
+# After MVP
+
+- how to create systemjs output (after MVP)
+- typescript example (after)
+- polyfills loader injected into JS (after MVP)
+- optimize helpers (after MVP)
+- workbox (after MVP)
+- inject service worker? (after MVP)
