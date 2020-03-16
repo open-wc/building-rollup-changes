@@ -1,24 +1,5 @@
 import './a/b/import-meta-test-2.js';
 
-setTimeout(() => {
-  import('./lazy.js');
-}, 1000);
-
-function html() {}
-
-class Foo {
-  bar() {
-    return 'x';
-  }
-}
-
-const myTemplate = html`
-  foo bar
-`;
-
-console.log(Foo);
-console.log(myTemplate);
-
 async function asyncFunction() {
   await new Promise(resolve => setTimeout(resolve, 1));
   return true;
