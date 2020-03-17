@@ -6,6 +6,7 @@ const createBabelConfigRollupBuild = developmentMode => ({
   plugins: [
     // rollup doesn't support optional chaining yet, so we compile it during input
     [require.resolve('@babel/plugin-proposal-optional-chaining'), { loose: true }],
+    [require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'), { loose: true }],
 
     // plugins that aren't part of @babel/preset-env should be applied regularly in
     // the rollup build phase
@@ -17,12 +18,15 @@ const createBabelConfigRollupBuild = developmentMode => ({
           'lit-html': ['html'],
           'lit-element': ['html', { name: 'css', encapsulation: 'style' }],
         },
+        logOnError: true,
+        failOnError: false,
         strictCSS: true,
         htmlMinifier: {
           collapseWhitespace: true,
           conservativeCollapse: true,
           removeComments: true,
           caseSensitive: true,
+          minifyCSS: true,
         },
       },
     ],

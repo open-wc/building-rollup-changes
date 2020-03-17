@@ -6,5 +6,5 @@ const baseConfig = createBasicConfig({
 });
 
 module.exports = deepmerge(baseConfig, {
-  input: './demo/js/syntax.js',
+  input: './demo/js/demo-app.js',
 });
