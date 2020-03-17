@@ -1,9 +1,6 @@
 # Before MVP
 
-- port over demo from building-rollup
-- thorough porta test
 - test on windows
-- review naming of config options (ex. additionalLegacyBuild)
 
 # After MVP
 
