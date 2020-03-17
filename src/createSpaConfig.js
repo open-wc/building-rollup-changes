@@ -58,9 +58,13 @@ function createSpaConfig(options) {
       plugins: [
         htmlPlugin,
         polyfillsLoader({
-          modernOutput: 'modern',
+          modernOutput: {
+            name: 'modern',
+            type: 'module',
+          },
           legacyOutput: {
             name: 'legacy',
+            type: 'systemjs',
             test: "!('noModule' in HTMLScriptElement.prototype)",
           },
           polyfills: defaultLegacyPolyfills,

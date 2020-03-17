@@ -68,18 +68,26 @@ window.__asyncFunction = asyncFunction();
 window.__forOf = forOf() === 3;
 window.__optionalChaining = foo?.bar === 'lorem ipsum' && foo?.bar?.loremIpsum === undefined;
 window.__nullishCoalescing = (loremIpsum ?? 'lorem ipsum') === 'lorem ipsum';
-console.log(partialCSS.cssText);
 window.__partialCSS = partialCSS.includes('font-size:16px') && partialCSS.includes('display:block');
 window.__minifiedCSS = stylesToBeMinified.cssText === '';
 window.__litElement = (async () => {
   await import('./lazy-component.js');
+  await customElements.whenDefined('demo-app');
+  await customElements.whenDefined('demo-component');
+  await customElements.whenDefined('lazy-component');
+
   const app = document.body.querySelector('demo-app');
+  await app.updateComplete;
+
   const demoComponent = app.shadowRoot.querySelector('demo-component');
+  await demoComponent.updateComplete;
+
   const lazyComponent = app.shadowRoot.querySelector('lazy-component');
+  await lazyComponent.updateComplete;
 
   return (
-    app.shadowRoot.innerHTML.includes('<p>Demo app</p>') &&
-    demoComponent.shadowRoot.innerHTML.includes('<p>Demo component</p>') &&
-    lazyComponent.shadowRoot.innerHTML.includes('<p>Lazy component</p>')
+    app.shadowRoot.innerHTML.includes('Demo app</p>') &&
+    demoComponent.shadowRoot.innerHTML.includes('Demo component</p>') &&
+    lazyComponent.shadowRoot.innerHTML.includes('Lazy component</p>')
   );
 })();

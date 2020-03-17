@@ -12,7 +12,8 @@
     "start:build": "es-dev-server --root-dir dist --compatibility none --open",
     "start:spa": "npm run build:spa && npm run start:build",
     "start:spa-nomodule": "npm run build:spa-nomodule && npm run start:build",
-    "start:babelrc": "npm run build:babelrc && npm run start:build"
+    "start:babelrc": "npm run build:babelrc && npm run start:build",
+    "start:watch": "npm run build:spa-nomodule -- --watch & npm run start:build"
   },
   "keywords": [],
   "author": "",
