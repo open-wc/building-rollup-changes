@@ -1,8 +1,12 @@
+export interface LegacyBuilds {
+  nomodule?: boolean;
+}
+
 export interface BasicOptions {
   nodeResolve?: boolean | object;
   babel?: boolean | object;
   terser?: boolean | object;
-  additionalLegacyBuild?: boolean;
+  legacyBuilds?: LegacyBuilds;
 }
 
 export interface SpaOptions extends BasicOptions {

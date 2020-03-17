@@ -3,7 +3,9 @@ const { createSpaConfig } = require('../../index.js');
 
 const baseConfig = createSpaConfig({
   developmentMode: false,
-  additionalLegacyBuild: true,
+  legacyBuilds: {
+    nomodule: true,
+  },
 });
 
 module.exports = merge(baseConfig, {

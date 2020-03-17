@@ -29,6 +29,9 @@ function createSpaConfig(options) {
     {
       html: true,
       polyfillsLoader: true,
+      legacyBuilds: {
+        nomodule: false,
+      },
     },
     options,
   );
@@ -43,7 +46,7 @@ function createSpaConfig(options) {
     outputConfig.dynamicImportFunction = 'importShim';
   }
 
-  if (options.additionalLegacyBuild) {
+  if (options.legacyBuilds.nomodule) {
     if (!htmlPlugin) {
       throw new Error('Cannot generate multi build outputs when html plugin is disabled');
     }

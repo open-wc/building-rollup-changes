@@ -18,10 +18,13 @@ const { isFalsy, pluginWithOptions } = require('./utils');
 function createBasicConfig(options = {}) {
   options = merge(
     {
+      developmentMode: !!process.env.ROLLUP_WATCH,
       nodeResolve: true,
       babel: true,
       terser: true,
-      developmentMode: !!process.env.ROLLUP_WATCH,
+      legacyBuilds: {
+        nomodule: false,
+      },
     },
     options,
   );
@@ -53,13 +56,13 @@ function createBasicConfig(options = {}) {
 
   // when we need to add an additional legacy build, we turn the output option into an array
   // of output configs
-  if (options.additionalLegacyBuild) {
+  if (options.legacyBuilds.nomodule) {
     config.output = [
       config.output,
       {
         ...config.output,
-        entryFileNames: `legacy-${fileName}`,
-        chunkFileNames: `legacy-${fileName}`,
+        entryFileNames: `nomodule-${fileName}`,
+        chunkFileNames: `nomodule-${fileName}`,
         plugins: [babel.generated(babelConfigLegacyRollupGenerate)],
       },
     ];
