@@ -4,8 +4,12 @@
 const merge = require('deepmerge');
 const html = require('@open-wc/rollup-plugin-html');
 const polyfillsLoader = require('@open-wc/rollup-plugin-polyfills-loader');
+const getWorkboxConfig = require('@open-wc/building-utils/get-workbox-config');
+const fs = require('fs');
+const path = require('path');
+const { generateSW } = require('rollup-plugin-workbox');
 const { createBasicConfig } = require('./createBasicConfig');
-const { pluginWithOptions } = require('./utils');
+const { pluginWithOptions, applyServiceWorkerRegistration } = require('./utils');
 const { defaultPolyfills, defaultLegacyPolyfills } = require('./polyfills');
 
 /**
@@ -32,9 +36,14 @@ function createSpaConfig(options) {
       legacyBuilds: {
         nomodule: false,
       },
+      serviceWorker: {
+        addRegistration: false,
+        generateSW: true
+      }
     },
     options,
   );
+  const { serviceWorker } = options;
 
   const htmlPlugin = pluginWithOptions(html, options.html, { inject: false });
 
@@ -71,16 +80,32 @@ function createSpaConfig(options) {
         }),
       ],
     });
-  } else {
-    return merge(basicConfig, {
-      plugins: [
-        htmlPlugin,
-        polyfillsLoader({
-          polyfills: defaultPolyfills,
-        }),
-      ],
-    });
   }
+
+  return merge(basicConfig, {
+    plugins: [
+      htmlPlugin,
+      polyfillsLoader({
+        polyfills: defaultPolyfills,
+      }),
+      serviceWorker.generateSW &&
+      generateSW(getWorkboxConfig(basicConfig.output.dir)),
+      serviceWorker.addRegistration &&
+      serviceWorker.generateSW &&
+      {
+        name: 'rollup-plugin-register-sw',
+        writeBundle(_, bundle) {
+          const htmlFileName = htmlPlugin.getHtmlFileName();
+          const outputPath = path.join(basicConfig.output.dir, htmlFileName);
+          let htmlSource = bundle[htmlFileName].source;
+
+          htmlSource = applyServiceWorkerRegistration(htmlSource)
+
+          fs.writeFileSync(outputPath, htmlSource, { encoding: 'utf8', flag: 'w' });
+        }
+      },
+    ],
+  });
 }
 
 module.exports = { createSpaConfig };
