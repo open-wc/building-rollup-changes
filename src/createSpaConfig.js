@@ -4,7 +4,6 @@
 const merge = require('deepmerge');
 const html = require('@open-wc/rollup-plugin-html');
 const polyfillsLoader = require('@open-wc/rollup-plugin-polyfills-loader');
-const getWorkboxConfig = require('@open-wc/building-utils/get-workbox-config');
 const fs = require('fs');
 const path = require('path');
 const { generateSW } = require('rollup-plugin-workbox');
@@ -29,23 +28,20 @@ function polyfillDynamicImport(userConfig) {
  */
 function createSpaConfig(options) {
   const basicConfig = createBasicConfig(options);
-  options = merge(
+  const opts = merge(
     {
       html: true,
       polyfillsLoader: true,
+      workbox: true,
+      injectServiceWorker: false,
       legacyBuilds: {
         nomodule: false,
       },
-      serviceWorker: {
-        addRegistration: false,
-        generateSW: true
-      }
     },
     options,
   );
-  const { serviceWorker } = options;
 
-  const htmlPlugin = pluginWithOptions(html, options.html, { inject: false });
+  const htmlPlugin = pluginWithOptions(html, opts.html, { inject: false });
 
   if (polyfillDynamicImport(polyfillsLoader)) {
     const outputConfig = Array.isArray(basicConfig.output)
@@ -55,7 +51,7 @@ function createSpaConfig(options) {
     outputConfig.dynamicImportFunction = 'importShim';
   }
 
-  if (options.legacyBuilds.nomodule) {
+  if (opts.legacyBuilds.nomodule) {
     if (!htmlPlugin) {
       throw new Error('Cannot generate multi build outputs when html plugin is disabled');
     }
@@ -66,7 +62,7 @@ function createSpaConfig(options) {
     return merge(basicConfig, {
       plugins: [
         htmlPlugin,
-        polyfillsLoader({
+        pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, {
           modernOutput: {
             name: 'modern',
             type: 'module',
@@ -85,24 +81,28 @@ function createSpaConfig(options) {
   return merge(basicConfig, {
     plugins: [
       htmlPlugin,
-      polyfillsLoader({
-        polyfills: defaultPolyfills,
-      }),
-      serviceWorker.generateSW &&
-      generateSW(getWorkboxConfig(basicConfig.output.dir)),
-      serviceWorker.addRegistration &&
-      serviceWorker.generateSW &&
-      {
-        name: 'rollup-plugin-register-sw',
-        writeBundle(_, bundle) {
-          const htmlFileName = htmlPlugin.getHtmlFileName();
-          const outputPath = path.join(basicConfig.output.dir, htmlFileName);
-          let htmlSource = bundle[htmlFileName].source;
 
-          htmlSource = applyServiceWorkerRegistration(htmlSource)
+      pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, { polyfills: defaultPolyfills }),
 
-          fs.writeFileSync(outputPath, htmlSource, { encoding: 'utf8', flag: 'w' });
-        }
+      opts.workbox &&
+        pluginWithOptions(generateSW, opts.workbox, {
+          globIgnores: ['/legacy/*.js'],
+          navigateFallback: '/index.html',
+          // where to output the generated sw
+          swDest: path.join(process.cwd(), basicConfig.output.dir, 'sw.js'),
+          // directory to match patterns against to be precached
+          globDirectory: path.join(process.cwd(), basicConfig.output.dir),
+          // cache any html js and css by default
+          globPatterns: ['**/*.{html,js,css}'],
+        }),
+
+      opts.injectServiceWorker && {
+        name: 'rollup-plugin-inject-service-worker',
+        generateBundle(_, bundle) {
+          const name = htmlPlugin.getHtmlFileName();
+          const htmlSource = bundle[name].source;
+          bundle[name].source = applyServiceWorkerRegistration(htmlSource);
+        },
       },
     ],
   });

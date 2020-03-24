@@ -16,8 +16,6 @@ function pluginWithOptions(plugin, userConfig, defaultConfig) {
 }
 
 /**
- * TODO: this could potentially be moved to @open-wc/building-utils maybe?
- * Applies the service worker registration to the index.html
  * @param {string} htmlString
  * @returns {string}
  */
@@ -28,12 +26,15 @@ function applyServiceWorkerRegistration(htmlString) {
     {},
     Terser.minify(`
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(() => {
-          console.log('ServiceWorker registered!');
-        }, (err) => {
-          console.log('ServiceWorker registration failed: ', err);
-        });
+      window.addEventListener('load', function() {
+        navigator.serviceWorker
+          .register('./sw.js')
+          .then(function() {
+            console.log('ServiceWorker registered.');
+          })
+          .catch(function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
       });
     }
   `).code,

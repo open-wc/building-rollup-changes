@@ -12,3 +12,4 @@
 - inject service worker? (after MVP)
 - inline module creates a fake facade?
 - deal with import.meta.url
+- prefetch initial imports
