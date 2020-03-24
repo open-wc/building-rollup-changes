@@ -50,7 +50,7 @@ function createBasicConfig(options = {}) {
       pluginWithOptions(babel, options.babel, createBabelConfigRollupBuild(developmentMode)),
 
       !developmentMode &&
-        pluginWithOptions(terser, options.terser, { output: { comments: false } }),
+      pluginWithOptions(terser, options.terser, { output: { comments: false } }),
     ].filter(isFalsy),
   };
 

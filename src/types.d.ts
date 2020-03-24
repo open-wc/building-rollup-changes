@@ -7,6 +7,12 @@ export interface BasicOptions {
   babel?: boolean | object;
   terser?: boolean | object;
   legacyBuilds?: LegacyBuilds;
+  serviceWorker?: serviceWorkerOptions;
+}
+
+interface serviceWorkerOptions {
+  generateSW?: boolean;
+  addRegistration?: boolean;
 }
 
 export interface SpaOptions extends BasicOptions {
