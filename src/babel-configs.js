@@ -38,8 +38,6 @@ function createBabelConfigRollupGenerate(modern = true) {
     babelrc: false,
     configFile: false,
     presets: [
-      // optimization: can be removed when https://github.com/babel/babel/pull/11083 is merged
-      modern && require.resolve('@babel/preset-modules'),
       [
         require.resolve('@babel/preset-env'),
         {
@@ -47,15 +45,10 @@ function createBabelConfigRollupGenerate(modern = true) {
           useBuiltIns: false,
           shippedProposals: true,
           modules: false,
-
-          // optimization: in modern output, exclude some babel transforms because @babel/preset-modules
-          // handles them, can be removed when https://github.com/babel/babel/pull/11083 is merged
-          exclude: modern
-            ? ['@babel/plugin-transform-parameters', '@babel/plugin-transform-template-literals']
-            : [],
+          bugfixes: true,
         },
       ],
-    ].filter(isFalsy),
+    ],
 
     plugins: [
       require.resolve('@babel/plugin-syntax-dynamic-import'),
