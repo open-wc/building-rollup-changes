@@ -873,7 +873,7 @@
     eslint-config-prettier "^3.3.0"
     prettier "^1.19.1"
 
-"@open-wc/rollup-plugin-html@^0.3.3":
+"@open-wc/rollup-plugin-html@^0.3.3", "@open-wc/rollup-plugin-html@^0.3.6":
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/@open-wc/rollup-plugin-html/-/rollup-plugin-html-0.3.6.tgz#f6a26978ad332f420c8e839e2d8bbe4046982f9f"
   integrity sha512-aS/iks27ycQQDTO2hlr3/umHRs+Xi/qdyP42eNznFS+E1VcsubxDdB9OmBh2w0jIMxxbpkNalRQxuk9BxoV6uA==
@@ -885,13 +885,13 @@
     parse5 "^5.1.1"
     terser "^4.6.4"
 
-"@open-wc/rollup-plugin-polyfills-loader@^0.3.0":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@open-wc/rollup-plugin-polyfills-loader/-/rollup-plugin-polyfills-loader-0.3.2.tgz#b616e3cee903b19dd6aa7da11bbfcacc7bf79d7e"
-  integrity sha512-adFU7rDaTbSm+teJR240pYKp45133j5krZ4M7wXAFcpA+bnHgbwfd2wLw/Lv7ZcxnEgOOTpF3AFlQLrbfbBZKA==
+"@open-wc/rollup-plugin-polyfills-loader@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@open-wc/rollup-plugin-polyfills-loader/-/rollup-plugin-polyfills-loader-0.4.3.tgz#8a53097db480b8177f1b6eca20f54081b9a705a6"
+  integrity sha512-fCNTwmigK3Wpa3YI10sAlGChHBjFhmGwNHpM2fyy2BkgrEPuaAAeSVRYqqzCNx/Ukh0dkabL53r+xiUXhsKUTQ==
   dependencies:
-    "@open-wc/rollup-plugin-html" "^0.3.3"
-    polyfills-loader "^1.5.1"
+    "@open-wc/rollup-plugin-html" "^0.3.6"
+    polyfills-loader "^1.5.2"
 
 "@rollup/plugin-node-resolve@^6.1.0":
   version "6.1.0"
@@ -970,9 +970,9 @@
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
 "@types/node@*":
-  version "12.12.31"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.31.tgz#d6b4f9645fee17f11319b508fb1001797425da51"
-  integrity sha512-T+wnJno8uh27G9c+1T+a1/WYCHzLeDqtsGJkoEdSp2X8RTh3oOCZQcUnjAx90CS8cmmADX51O0FI/tu9s0yssg==
+  version "13.9.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.5.tgz#59738bf30b31aea1faa2df7f4a5f55613750cf00"
+  integrity sha512-hkzMMD3xu6BrJpGVLeQ3htQQNAcOrJjX7WFmtK8zWQpz2UJf13LCFF2ALA7c9OVdvc2vQJeDdjfR35M0sBCxvw==
 
 "@types/relateurl@*":
   version "0.2.28"
@@ -3276,7 +3276,7 @@ pkg-up@^3.1.0:
   dependencies:
     find-up "^3.0.0"
 
-polyfills-loader@^1.5.1, polyfills-loader@^1.5.2:
+polyfills-loader@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/polyfills-loader/-/polyfills-loader-1.5.2.tgz#2fe63063da0d74aa69b611bd189d64ee443358c7"
   integrity sha512-bcv8Id4Ylae0eSmnlMpKfba36TNr1Mh7uMGN4OEIspHLGR5/IBGSBteQp/NpbZ45T7UWQuTBvVJNQCS16E1N4A==

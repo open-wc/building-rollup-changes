@@ -4,24 +4,11 @@
 const merge = require('deepmerge');
 const html = require('@open-wc/rollup-plugin-html');
 const polyfillsLoader = require('@open-wc/rollup-plugin-polyfills-loader');
-const fs = require('fs');
 const path = require('path');
 const { generateSW } = require('rollup-plugin-workbox');
 const { createBasicConfig } = require('./createBasicConfig');
 const { pluginWithOptions, applyServiceWorkerRegistration } = require('./utils');
-const { defaultPolyfills, defaultLegacyPolyfills } = require('./polyfills');
-
-/**
- * @param {PolyfillsLoaderConfig | boolean} userConfig
- */
-function polyfillDynamicImport(userConfig) {
-  if (typeof userConfig.polyfills === 'object' && 'dynamicImport' in userConfig.polyfills) {
-    // user has set dynamic import option explicitly
-    return userConfig.polyfills.dynamicImport;
-  }
-  // config is a boolean, if false no polyfills will be loaded at all, otherwise defaults will be loaded
-  return !!userConfig;
-}
+const { defaultPolyfills } = require('./polyfills');
 
 /**
  * @param {SpaOptions} options
@@ -41,38 +28,36 @@ function createSpaConfig(options) {
     options,
   );
 
-  const htmlPlugin = pluginWithOptions(html, opts.html, { inject: false });
-
-  if (polyfillDynamicImport(polyfillsLoader)) {
-    const outputConfig = Array.isArray(basicConfig.output)
-      ? basicConfig.output[0]
-      : basicConfig.output;
-
-    outputConfig.dynamicImportFunction = 'importShim';
-  }
+  const htmlPlugin = pluginWithOptions(html, opts.html, {
+    minify: !opts.developmentMode,
+    inject: false,
+  });
 
   if (opts.legacyBuilds.nomodule) {
     if (!htmlPlugin) {
       throw new Error('Cannot generate multi build outputs when html plugin is disabled');
     }
 
-    basicConfig.output[0].plugins.push(htmlPlugin.addOutput('modern'));
-    basicConfig.output[1].plugins.push(htmlPlugin.addOutput('legacy'));
+    basicConfig.output[0].plugins.push(htmlPlugin.addOutput('module'));
+    basicConfig.output[1].plugins.push(htmlPlugin.addOutput('nomodule'));
 
     return merge(basicConfig, {
       plugins: [
         htmlPlugin,
         pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, {
           modernOutput: {
-            name: 'modern',
+            name: 'module',
             type: 'module',
           },
           legacyOutput: {
-            name: 'legacy',
+            name: 'nomodule',
             type: 'systemjs',
-            test: "!('noModule' in HTMLScriptElement.prototype)",
+            test:
+              // test if browser supports dynamic imports (and thus modules). import.meta.url cannot be tested
+              "(function(){try{Function('!function(){import(_)}').call();return false;}catch(_){return true}})()",
           },
-          polyfills: defaultLegacyPolyfills,
+          minify: !opts.developmentMode,
+          polyfills: defaultPolyfills,
         }),
       ],
     });
@@ -82,11 +67,14 @@ function createSpaConfig(options) {
     plugins: [
       htmlPlugin,
 
-      pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, { polyfills: defaultPolyfills }),
+      pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, {
+        polyfills: {},
+        minify: !opts.developmentMode,
+      }),
 
       opts.workbox &&
         pluginWithOptions(generateSW, opts.workbox, {
-          globIgnores: ['/legacy/*.js'],
+          globIgnores: ['legacy-*.js'],
           navigateFallback: '/index.html',
           // where to output the generated sw
           swDest: path.join(process.cwd(), basicConfig.output.dir, 'sw.js'),
@@ -99,9 +87,9 @@ function createSpaConfig(options) {
       opts.injectServiceWorker && {
         name: 'rollup-plugin-inject-service-worker',
         generateBundle(_, bundle) {
-          const name = htmlPlugin.getHtmlFileName();
-          const htmlSource = bundle[name].source;
-          bundle[name].source = applyServiceWorkerRegistration(htmlSource);
+          const htmlFileName = htmlPlugin.getHtmlFileName();
+          const htmlSource = bundle[htmlFileName].source;
+          bundle[htmlFileName].source = applyServiceWorkerRegistration(htmlSource);
         },
       },
     ],
