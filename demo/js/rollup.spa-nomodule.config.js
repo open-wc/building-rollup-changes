@@ -3,6 +3,7 @@ const { createSpaConfig } = require('../../index.js');
 
 const baseConfig = createSpaConfig({
   developmentMode: false,
+  injectServiceWorker: true,
   legacyBuilds: {
     nomodule: true,
   },

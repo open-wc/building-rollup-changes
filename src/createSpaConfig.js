@@ -8,7 +8,12 @@ const polyfillsLoader = require('@open-wc/rollup-plugin-polyfills-loader');
 const path = require('path');
 const { generateSW } = require('rollup-plugin-workbox');
 const { createBasicConfig } = require('./createBasicConfig');
-const { pluginWithOptions, applyServiceWorkerRegistration } = require('./utils');
+const {
+  pluginWithOptions,
+  applyServiceWorkerRegistration,
+  injectPreloadEntrypoints,
+  isFalsy,
+} = require('./utils');
 const { defaultPolyfills } = require('./polyfills');
 
 /**
@@ -16,7 +21,7 @@ const { defaultPolyfills } = require('./polyfills');
  */
 function createSpaConfig(options) {
   const basicConfig = createBasicConfig(options);
-  const opts = merge(
+  const userOptions = merge(
     {
       html: true,
       polyfillsLoader: true,
@@ -28,43 +33,45 @@ function createSpaConfig(options) {
     },
     options,
   );
+  let outputDir = basicConfig.output.dir;
 
-  const htmlPlugin = pluginWithOptions(html, opts.html, {
-    minify: !opts.developmentMode,
+  const htmlPlugin = pluginWithOptions(html, userOptions.html, {
+    minify: !userOptions.developmentMode,
+    transform: [
+      injectPreloadEntrypoints,
+      userOptions.injectServiceWorker && applyServiceWorkerRegistration,
+    ].filter(isFalsy),
     inject: false,
   });
 
-  if (opts.legacyBuilds.nomodule) {
+  let polyfillsLoaderConfig = {
+    polyfills: {},
+    minify: !userOptions.developmentMode,
+  };
+
+  if (userOptions.legacyBuilds.nomodule) {
     if (!htmlPlugin) {
       throw new Error('Cannot generate multi build outputs when html plugin is disabled');
     }
+    outputDir = basicConfig.output[0].dir;
 
     basicConfig.output[0].plugins.push(htmlPlugin.addOutput('module'));
     basicConfig.output[1].plugins.push(htmlPlugin.addOutput('nomodule'));
-
-    return merge(basicConfig, {
-      plugins: [
-        // create HTML file output
-        htmlPlugin,
-
-        // inject polyfills loader into HTML
-        pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, {
-          modernOutput: {
-            name: 'module',
-            type: 'module',
-          },
-          legacyOutput: {
-            name: 'nomodule',
-            type: 'systemjs',
-            test:
-              // test if browser supports dynamic imports (and thus modules). import.meta.url cannot be tested
-              "(function(){try{Function('!function(){import(_)}').call();return false;}catch(_){return true}})()",
-          },
-          minify: !opts.developmentMode,
-          polyfills: defaultPolyfills,
-        }),
-      ],
-    });
+    polyfillsLoaderConfig = {
+      modernOutput: {
+        name: 'module',
+        type: 'module',
+      },
+      legacyOutput: {
+        name: 'nomodule',
+        type: 'systemjs',
+        test:
+          // test if browser supports dynamic imports (and thus modules). import.meta.url cannot be tested
+          "(function(){try{Function('!function(){import(_)}').call();return false;}catch(_){return true}})()",
+      },
+      minify: !userOptions.developmentMode,
+      polyfills: defaultPolyfills,
+    };
   }
 
   return merge(basicConfig, {
@@ -73,33 +80,20 @@ function createSpaConfig(options) {
       htmlPlugin,
 
       // inject polyfills loader into HTML
-      pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, {
-        polyfills: {},
-        minify: !opts.developmentMode,
-      }),
+      pluginWithOptions(polyfillsLoader, userOptions.polyfillsLoader, polyfillsLoaderConfig),
 
       // generate service worker
-      opts.workbox &&
-        pluginWithOptions(generateSW, opts.workbox, {
+      userOptions.workbox &&
+        pluginWithOptions(generateSW, userOptions.workbox, {
           globIgnores: ['legacy-*.js'],
           navigateFallback: '/index.html',
           // where to output the generated sw
-          swDest: path.join(process.cwd(), basicConfig.output.dir, 'sw.js'),
+          swDest: path.join(process.cwd(), outputDir, 'sw.js'),
           // directory to match patterns against to be precached
-          globDirectory: path.join(process.cwd(), basicConfig.output.dir),
+          globDirectory: path.join(process.cwd(), outputDir),
           // cache any html js and css by default
           globPatterns: ['**/*.{html,js,css}'],
         }),
-
-      // inject service worker into HTML page
-      opts.injectServiceWorker && {
-        name: 'rollup-plugin-inject-service-worker',
-        generateBundle(_, bundle) {
-          const htmlFileName = htmlPlugin.getHtmlFileName();
-          const htmlSource = bundle[htmlFileName].source;
-          bundle[htmlFileName].source = applyServiceWorkerRegistration(htmlSource);
-        },
-      },
     ],
   });
 }

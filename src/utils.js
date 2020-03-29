@@ -15,11 +15,34 @@ function pluginWithOptions(plugin, userConfig, defaultConfig) {
   return plugin(config);
 }
 
+function injectPreloadEntrypoints(html, { bundle, bundles }) {
+  const { entrypoints } = bundles.module || bundle;
+  let preloaded = [];
+  for (const entrypoint of entrypoints) {
+    preloaded.push(entrypoint.importPath);
+    preloaded.push(...entrypoint.chunk.imports);
+  }
+  preloaded = [...new Set(preloaded)];
+
+  return html.replace(
+    '</head>',
+    preloaded
+      .map(
+        i =>
+          `<link rel="preload" href="${
+            i.startsWith('./') ? i : `./${i}`
+          }" as="script" crossorigin="anonymous">`,
+      )
+      .join(''),
+  );
+}
+
 /**
  * @param {string} htmlString
  * @returns {string}
  */
 function applyServiceWorkerRegistration(htmlString) {
+  console.log('applyServiceWorkerRegistration', htmlString);
   const documentAst = parse(htmlString);
   const body = query(documentAst, predicates.hasTagName('body'));
   const swRegistration = createScript(
@@ -44,4 +67,9 @@ function applyServiceWorkerRegistration(htmlString) {
   return serialize(documentAst);
 }
 
-module.exports = { isFalsy, pluginWithOptions, applyServiceWorkerRegistration };
+module.exports = {
+  isFalsy,
+  pluginWithOptions,
+  applyServiceWorkerRegistration,
+  injectPreloadEntrypoints,
+};

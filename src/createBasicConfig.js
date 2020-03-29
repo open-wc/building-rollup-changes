@@ -15,10 +15,10 @@ const { bundledBabelHelpers } = require('./babel/rollup-plugin-bundled-babel-hel
 const { isFalsy, pluginWithOptions } = require('./utils');
 
 /**
- * @param {BasicOptions} options
+ * @param {BasicOptions} userOptions
  */
-function createBasicConfig(options = {}) {
-  options = merge(
+function createBasicConfig(userOptions = {}) {
+  userOptions = merge(
     {
       developmentMode: !!process.env.ROLLUP_WATCH,
       nodeResolve: true,
@@ -28,9 +28,9 @@ function createBasicConfig(options = {}) {
         nomodule: false,
       },
     },
-    options,
+    userOptions,
   );
-  const { developmentMode } = options;
+  const { developmentMode } = userOptions;
   const fileName = `[${developmentMode ? 'name' : 'hash'}].js`;
   const assetName = `[${developmentMode ? 'name' : 'hash'}][extname]`;
 
@@ -53,22 +53,22 @@ function createBasicConfig(options = {}) {
 
     plugins: [
       // resolve bare module imports
-      pluginWithOptions(resolve, options.nodeResolve, {
+      pluginWithOptions(resolve, userOptions.nodeResolve, {
         moduleDirectory: ['node_modules', 'web_modules'],
       }),
 
       // build non-standard syntax to standard syntax and other babel optimization plugins
-      pluginWithOptions(babel, options.babel, createBabelConfigRollupBuild(developmentMode)),
+      pluginWithOptions(babel, userOptions.babel, createBabelConfigRollupBuild(developmentMode)),
 
       // minify js code
       !developmentMode &&
-        pluginWithOptions(terser, options.terser, { output: { comments: false } }),
+        pluginWithOptions(terser, userOptions.terser, { output: { comments: false } }),
     ].filter(isFalsy),
   };
 
   // when we need to add an additional legacy build, we turn the output option into an array
   // of output configs
-  if (options.legacyBuilds.nomodule) {
+  if (userOptions.legacyBuilds.nomodule) {
     config.output = [
       config.output,
       {
