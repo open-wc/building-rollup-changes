@@ -7,7 +7,6 @@
 - how to create systemjs output (after MVP)
 - typescript example (after)
 - polyfills loader injected into JS (after MVP)
-- inline module creates a fake facade?
 - prefetch initial imports
 - configure terser output for older browsers
 - fix async iterator on old edge
