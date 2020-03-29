@@ -115,6 +115,10 @@ function bundledBabelHelpers({ format = 'es', minify = true } = {}) {
      * babel helpers chunk using the hashed babel helpers filename.
      */
     generateBundle(_, bundle) {
+      if (totalHelpers.length === 0) {
+        return;
+      }
+
       const helperModule = createHelperModule(totalHelpers, format, minify);
       const helperId = this.emitFile({
         name: 'babel-helpers.js',
