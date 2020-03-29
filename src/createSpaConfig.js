@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /** @typedef {import('./types').SpaOptions} SpaOptions */
 /** @typedef {import('polyfills-loader').PolyfillsLoaderConfig} PolyfillsLoaderConfig */
 
@@ -43,7 +44,10 @@ function createSpaConfig(options) {
 
     return merge(basicConfig, {
       plugins: [
+        // create HTML file output
         htmlPlugin,
+
+        // inject polyfills loader into HTML
         pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, {
           modernOutput: {
             name: 'module',
@@ -65,13 +69,16 @@ function createSpaConfig(options) {
 
   return merge(basicConfig, {
     plugins: [
+      // create HTML file output
       htmlPlugin,
 
+      // inject polyfills loader into HTML
       pluginWithOptions(polyfillsLoader, opts.polyfillsLoader, {
         polyfills: {},
         minify: !opts.developmentMode,
       }),
 
+      // generate service worker
       opts.workbox &&
         pluginWithOptions(generateSW, opts.workbox, {
           globIgnores: ['legacy-*.js'],
@@ -84,6 +91,7 @@ function createSpaConfig(options) {
           globPatterns: ['**/*.{html,js,css}'],
         }),
 
+      // inject service worker into HTML page
       opts.injectServiceWorker && {
         name: 'rollup-plugin-inject-service-worker',
         generateBundle(_, bundle) {

@@ -9,7 +9,9 @@ const {
   createBabelConfigRollupBuild,
   babelConfigRollupGenerate,
   babelConfigLegacyRollupGenerate,
-} = require('./babel-configs');
+  babelConfigSystemJs,
+} = require('./babel/babel-configs');
+const { bundledBabelHelpers } = require('./babel/rollup-plugin-bundled-babel-helpers');
 const { isFalsy, pluginWithOptions } = require('./utils');
 
 /**
@@ -30,6 +32,7 @@ function createBasicConfig(options = {}) {
   );
   const { developmentMode } = options;
   const fileName = `[${developmentMode ? 'name' : 'hash'}].js`;
+  const assetName = `[${developmentMode ? 'name' : 'hash'}][extname]`;
 
   const config = {
     treeshake: !developmentMode,
@@ -37,18 +40,27 @@ function createBasicConfig(options = {}) {
     output: {
       entryFileNames: fileName,
       chunkFileNames: fileName,
+      assetFileNames: assetName,
       format: 'es',
       dir: 'dist',
-      plugins: [babel.generated(babelConfigRollupGenerate)],
+      plugins: [
+        // build to js supported by modern browsers
+        babel.generated(babelConfigRollupGenerate),
+        // create babel-helpers chunk based on es5 build
+        bundledBabelHelpers({ minify: !developmentMode }),
+      ],
     },
 
     plugins: [
+      // resolve bare module imports
       pluginWithOptions(resolve, options.nodeResolve, {
         moduleDirectory: ['node_modules', 'web_modules'],
       }),
 
+      // build non-standard syntax to standard syntax and other babel optimization plugins
       pluginWithOptions(babel, options.babel, createBabelConfigRollupBuild(developmentMode)),
 
+      // minify js code
       !developmentMode &&
         pluginWithOptions(terser, options.terser, { output: { comments: false } }),
     ].filter(isFalsy),
@@ -63,7 +75,15 @@ function createBasicConfig(options = {}) {
         ...config.output,
         entryFileNames: `nomodule-${fileName}`,
         chunkFileNames: `nomodule-${fileName}`,
-        plugins: [babel.generated(babelConfigLegacyRollupGenerate)],
+        assetFileNames: `nomodule-${assetName}`,
+        plugins: [
+          // buid to es5
+          babel.generated(babelConfigLegacyRollupGenerate),
+          // create babel-helpers chunk based on es5 build
+          bundledBabelHelpers({ format: 'system', minify: !developmentMode }),
+          // build to systemjs after helpers, so that helpers can be statically analyzed
+          babel.generated(babelConfigSystemJs),
+        ],
       },
     ];
   }

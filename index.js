@@ -4,7 +4,7 @@ const {
   createBabelConfigRollupBuild,
   babelConfigRollupGenerate,
   babelConfigLegacyRollupGenerate,
-} = require('./src/babel-configs');
+} = require('./src/babel/babel-configs');
 
 module.exports = {
   createBasicConfig,

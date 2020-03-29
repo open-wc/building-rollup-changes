@@ -1,5 +1,6 @@
 const { findModernBrowserslist } = require('./findModernBrowserslist');
-const { isFalsy } = require('./utils');
+const { babelPluginBundledHelpers } = require('./babel-plugin-bundled-helpers');
+const { isFalsy } = require('../utils');
 
 const createBabelConfigRollupBuild = developmentMode => ({
   babelHelpers: 'bundled',
@@ -51,21 +52,29 @@ function createBabelConfigRollupGenerate(modern = true) {
     ],
 
     plugins: [
+      babelPluginBundledHelpers,
       require.resolve('@babel/plugin-syntax-dynamic-import'),
       require.resolve('@babel/plugin-syntax-import-meta'),
-
-      // transform modules to systemjs on legacy browsers
-      !modern && require.resolve('@babel/plugin-transform-modules-systemjs'),
-      !modern && require.resolve('@babel/plugin-proposal-dynamic-import'),
     ].filter(isFalsy),
   };
 }
+
+const babelConfigSystemJs = {
+  babelrc: false,
+  configFile: false,
+  plugins: [
+    require.resolve('@babel/plugin-syntax-import-meta'),
+    require.resolve('@babel/plugin-proposal-dynamic-import'),
+    require.resolve('@babel/plugin-transform-modules-systemjs'),
+  ],
+};
 
 const babelConfigRollupGenerate = createBabelConfigRollupGenerate();
 const babelConfigLegacyRollupGenerate = createBabelConfigRollupGenerate(false);
 
 module.exports = {
   createBabelConfigRollupBuild,
+  babelConfigSystemJs,
   babelConfigRollupGenerate,
   babelConfigLegacyRollupGenerate,
 };

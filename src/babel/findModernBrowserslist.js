@@ -5,9 +5,6 @@ const openWcTargets = [
   'last 3 ChromeAndroid major versions',
   'last 3 Firefox major versions',
   'last 3 Edge major versions',
-  // Last 2 edge no longer matches legacy EdgeHTML,
-  // we should still support it for the time being
-  'edge 18',
   'last 3 Safari major versions',
   'last 3 iOS major versions',
 ];
@@ -34,7 +31,7 @@ function findModernBrowserslist() {
   if (userHasDefinedTargets && userTargets.includes('ie 11')) {
     throw new Error(
       'Your browserslist configuration should not include IE 11.\n' +
-        'Configure rollup to output a separate build for IE 11',
+        'You can configure rollup to output a separate build for IE 11',
     );
   }
 

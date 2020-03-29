@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { LitElement, html, css } from 'lit-element';
 import './a/b/import-meta-test-2.js';
 import './demo-component.js';
@@ -60,6 +61,23 @@ function forOf() {
   return total;
 }
 
+const myAsyncIterable = {
+  async *[Symbol.asyncIterator]() {
+    yield 1;
+    yield 2;
+    yield 3;
+  },
+};
+function getAsyncIterated() {
+  return new Promise(async resolve => {
+    let total = 0;
+    for await (const x of myAsyncIterable) {
+      total += x;
+    }
+    resolve(total);
+  });
+}
+
 window.__startsWith = 'foo'.startsWith('fo');
 window.__map = new Map().set('foo', 'bar').get('foo') === 'bar';
 window.__importMeta =
@@ -68,6 +86,7 @@ window.__asyncFunction = asyncFunction();
 window.__forOf = forOf() === 3;
 window.__optionalChaining = foo?.bar === 'lorem ipsum' && foo?.bar?.loremIpsum === undefined;
 window.__nullishCoalescing = (loremIpsum ?? 'lorem ipsum') === 'lorem ipsum';
+window.__asyncIterator = getAsyncIterated().then(r => r === 6);
 window.__partialCSS = partialCSS.includes('font-size:16px') && partialCSS.includes('display:block');
 window.__minifiedCSS = stylesToBeMinified.cssText === '';
 window.__litElement = (async () => {
